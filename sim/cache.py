@@ -1,11 +1,13 @@
 #from node import Node
 #from handler import Handler
 
+
 class CacheStruct:
 
     def __init__(self, node, handler):
         self.node = node
         self.handler = handler   ###### the copy of handler when it proccessed the node
+
 
 
 class QNode:
@@ -15,7 +17,6 @@ class QNode:
         self.value: CacheStruct = value
         self.prev = None
         self.next = None
-
 
     def __str__(self):
         return "(%s, %s)" % (self.key, self.value)
@@ -33,13 +34,10 @@ class LRUCache:
         self.capacity = capacity
         self.current_size = 0
 
-    def get(self, key) -> QNode:
-        if key not in self.mapping:
+    def get(self, key: int) -> QNode:
+        node = self.mapping.get(key)
+        if not node:
             return None
-        
-        node = self.mapping[key]
-
-        # small optimization (1): just return the value if we are already looking at head
         if self.head == node:
             return node.value
         self._remove(node)
@@ -52,12 +50,9 @@ class LRUCache:
         return node.value if node else None
 
     def set(self, key, value: CacheStruct):
-
         if key in self.mapping:
             node = self.mapping[key]
             node.value = value
-
-            # small optimization (2): update pointers only if this is not head; otherwise return
             if self.head != node:
                 self._remove(node)
                 self._set_head(node)

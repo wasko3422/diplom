@@ -15,24 +15,16 @@ def main():
     # create trajectories
     TRAJECTORIES = generate_trajectories(100, 4)
 
-    # set cache
-    for i in range(len(TRAJECTORIES)):
-        HANDLERS.append(Handler(i, 2))
+    for i in range(len(HANDLERS_COUNT)):
+        pass
+        #HANDLERS.append(Handler(i, 2))
     
     ## main loop
-    for i in range(5000):
+    for i in range(100):
         for i in HANDLERS:
             i.handle()
-            if i.blocked:
-                ## TODO
-                i.read_only = True
-                pass
-        
-
-
-    
-
-
+        # filter out the hanlders you need to delete after handling a trajectory
+        HANDLERS = list(filter(lambda x: not x.delete_after_trajectory), HANDLERS)
 
 if __name__ == "__main__":
     main()
