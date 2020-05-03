@@ -87,6 +87,9 @@ class Handler:
             # TODO
             self._self_exchange(struct)
             return True
+        
+        # sync the values
+        self.average_nodes(self.node, struct.node)
 
         # update the trajectories 
         self.node.exchange(struct.node)
@@ -175,5 +178,4 @@ class Handler:
     
 
 if __name__ == "__main__":
-    b = Handler(1, None)
-    print(b)
+    pass
