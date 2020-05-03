@@ -5,9 +5,6 @@ from typing import List
 #from trajectory import Trajectory
 #from handler import Handler
 
-# Append the handlers trajectories here
-ALL_TRAJECTORIES: List = []
-
 # The initial trajectories
 TRAJECTORIES: List = []
 

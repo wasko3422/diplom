@@ -2,7 +2,7 @@
 from __future__ import annotations
 
 from trajectory import Trajectory, MovedTrajectory
-from typing import List
+from typing import List, Callable
 from node import Node
 from values import TRAJECTORIES, CACHE, TAIL_CACHE, HANDLERS
 from cache import CacheStruct
@@ -10,13 +10,17 @@ from cache import CacheStruct
 
 class Handler:
 
-    def __init__(self, first_node: Node, nodes_per_time: int):
+    def __init__(self, first_node:Node, nodes_per_time:int, update:Callable, average:Callable):
         self.blocked: bool = False
         self.nodes_per_time: int = nodes_per_time
         self.read_only: bool = False  # update the cache
         self.node: Node = first_node
         self.value = 1 # TODO
         self.sleep: int = 0  # skip the loop
+        self.update: Callable = update
+        self.average: Callable = average
+        self.delete_after_trajectory: bool = False
+        self.dumb_node: Node = Node(-1, 5, -1)
 
     def merge(self) -> bool:
         """
@@ -24,19 +28,20 @@ class Handler:
         result of merge
         ------[HEAD/TAIL]----->
         """
-        cache = TAIL_CACHE.get(self.node)
+        cache = TAIL_CACHE.get(self.node.id)
         if not cache:
             return False
-        
-        # Unblock
-        self.blocked = False
-        node = cache.value
 
+        node = cache.value
         tail_trajectory = TRAJECTORIES[node.trajectory_id]
         head_trajectory = TRAJECTORIES[self.node.trajectory_id]
 
         if head_trajectory == tail_trajectory:
-            raise('wtf')
+            print("Got the same trajectory in cache")
+            return False
+        
+        # Unblock
+        self.blocked = False
         
         # Create new trajectory
         merged_trajectory = head_trajectory.copy()
@@ -100,36 +105,31 @@ class Handler:
     def _self_exchange(self, struct: CacheStruct):
         pass
 
-    def handle(self) -> None:
-
+    def handle(self, nodes=None) -> None:
+        if nodes is None:
+            nodes = self.nodes_per_time
         if self.blocked:
             return
-
         if self.sleep:
             self.sleep -= 1
             return
-
         if self.read_only:
             self._read_only()
             return
 
         # iterate over loop
-        for _ in range(self.nodes_per_time):
+        for _ in range(nodes):
             # If we have reached the end of a trajectory
             # Change the handler to blocked mode
             if self.node.is_last():
                 self.blocked = True
-
                 # Call merge method
                 merged = self.merge()
-
                 # if we merged continue the loop
                 if merged:
                     continue
                 return
-            
             self.update_node(self.node)
-
             cache = CACHE.get_value(self.node.id)
             if cache:
                 self.exchange(cache)
@@ -151,14 +151,26 @@ class Handler:
     
 
     def _read_only(self) -> None:
-        for _ in range(self.nodes_per_time):
+        for i in range(self.nodes_per_time):
             if self.node.is_last():
+                merged = self.merge()
+                if merged:
+                    self.handle(self.nodes_per_time - (i+1))
                 return
-            CACHE.set(self.node.id, self)
+            self.update_node(self.dumb_node)  # for changing value
+            cache = CACHE.get_value(self.node.id) 
+            if cache:
+                self.exchange(cache)
+                self.handle(self.nodes_per_time - (i+1))
+                return
+            else:
+                # Add node to cache
+                struct = CacheStruct(self.node, self)
+                CACHE.set(self.node.id, struct)
             self.node = self.node.get_next_node()
 
     def copy(self) -> Handler:
-        copy = Handler(None, 0)
+        copy = Handler(None, 0, sum, mean)
         copy.value = self.value
         copy.blocked = self.blocked
         return copy
