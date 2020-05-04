@@ -2,8 +2,6 @@
 
 from cache import LRUCache
 from typing import List
-#from trajectory import Trajectory
-#from handler import Handler
 
 # The initial trajectories
 TRAJECTORIES: List = []
@@ -15,5 +13,3 @@ CACHE = LRUCache(1000)
 TAIL_CACHE = LRUCache(200)
 
 HANDLERS: List = []
-
-BLOCKED_HANDLERS: List = []

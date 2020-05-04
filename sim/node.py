@@ -38,3 +38,6 @@ class Node:
     def is_last(self) -> bool:
         return len(TRAJECTORIES[self.trajectory_id]) - 1 == self.index
 
+    def __str__(self) -> str:
+        return 'Node id: %s, value: %s, trajectory_id: %s' % (self.id, self.value, self.trajectory_id)
+
