@@ -15,6 +15,9 @@ class Trajectory:
         self.nodes.append(node)
         ##node.update_value(5)
 
+    def __str__(self):
+        return '%s' % self.nodes
+
     def __len__(self) -> int:
         return len(self.nodes)
 
@@ -50,6 +53,9 @@ class Trajectory:
         for i, k in enumerate(self.nodes):
             k.trajectory_id = self.id
             k.index = i
+
+    def get_first_node(self) -> Node:
+        return self.nodes[0]
 
 
 class MovedTrajectory:

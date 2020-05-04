@@ -29,5 +29,6 @@ def read_from_src_edgelist_to_idvalue():
     print(res)
     return res
 
-read_from_src_edgelist_to_idvalue()
-input("vvedi dlya zakrytia chtoto\n")
+if __name__ == "__main__":
+    read_from_src_edgelist_to_idvalue()
+    input("vvedi dlya zakrytia chtoto\n")

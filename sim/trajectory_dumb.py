@@ -1,4 +1,8 @@
 from random import choice as rchoice
+from os import listdir
+from typing import List
+
+import pickle
 
 
 def read_from_src_edgelist_to_idvalue():
@@ -38,6 +42,11 @@ def read_from_src_edgelist_to_idvalue():
     return res
 
 
+def id_value_dict():
+    ids = read_from_src_edgelist_to_idvalue()
+    return {id:value for (id, value, _) in ids}
+
+
 def traverse(offset_start, source_graph):
     current_trajectory = set()
     next_index = offset_start - 1
@@ -59,7 +68,7 @@ def traverse(offset_start, source_graph):
     return current_trajectory
 
 
-def main():
+def get_trajectories():
     test = read_from_src_edgelist_to_idvalue()
     unprocessed = set([i + 1 for i in range(len(test))])
     final = []
@@ -70,8 +79,26 @@ def main():
         # print(unprocessed)
         final.append(list(current))
 
-    print("final =", final)
+    #print("final =", final)
     return final
 
+# to prevent randomize output
+def save_trajectories(trajectories):
+    dirs = listdir()
+    version = 1
+    while True:
+        name = f'data_{version}.pickle'
+        if name in dirs:
+            version += 1
+            continue
+        with open(name, 'wb') as f:
+            pickle.dump(trajectories, f)
+        break
 
-main()
+def load_trajectories_from_file(name) -> List[int]:
+    with open(name, 'rb') as f:
+        data = pickle.load(f)
+    return data           
+
+if __name__ == "__main__":
+    print(id_value_dict())
