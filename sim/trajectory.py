@@ -33,10 +33,16 @@ class Trajectory:
         self.update_nodes_id()
 
     def exchange(self, trajectory: Trajectory, current_index: int, their_index: int):
+        
+        # print("-------")
+        # for i in self.nodes:
+        #     print(i)
 
-        ## TODO all
-        curr_nodes = self.nodes[:current_index+1].extend(trajectory[their_index+1:])
-        their_nodes = trajectory.nodes[:their_index+1].extend(self.nodes[current_index+1:])
+        # print("+++++++++")
+        # for i in trajectory:
+        #     print(i)
+        curr_nodes = self.nodes[:current_index+1] + trajectory[their_index+1:]
+        their_nodes = trajectory.nodes[:their_index+1] + self.nodes[current_index+1:]
 
         self.nodes = curr_nodes
         trajectory.nodes = their_nodes

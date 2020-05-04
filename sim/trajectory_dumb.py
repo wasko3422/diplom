@@ -101,4 +101,11 @@ def load_trajectories_from_file(name) -> List[int]:
     return data           
 
 if __name__ == "__main__":
-    print(id_value_dict())
+    ids = load_trajectories_from_file('data_1.pickle')
+
+    for i in ids:
+        head = i[-1]
+        for j in ids:
+            if head == j[0]:
+                print(i, j)
+

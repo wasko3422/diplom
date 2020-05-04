@@ -10,12 +10,12 @@ def load_trajectories(file_name: str) -> List[Trajectory]:
     # create trajectories
     ids = load_trajectories_from_file(file_name)
     values = id_value_dict()
-    print(values[1])
     out: List[Trajectory] = []
     # Create nodes
     # trajectory_id = index
     for i in range(len(ids)):
-        nodes = [Node(id=id, value=values.get(id), trajectory_id=i) for id in ids[i]]
+        nodes = [Node(id=id, value=values.get(id), trajectory_id=i, index=index) \
+                for index, id in enumerate(ids[i])]
         out.append(Trajectory(id=i, nodes=nodes))    
     return out
 

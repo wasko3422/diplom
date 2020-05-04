@@ -39,7 +39,7 @@ class LRUCache:
         if not node:
             return None
         if self.head == node:
-            return node.value
+            return node
         self._remove(node)
         self._set_head(node)
         return node

@@ -21,8 +21,7 @@ def networkx_pagerank():
 
     final = sorted(res, key=lambda item: item[0])
 
-    print(final)
-    input("vvedi dlya zakrytia chtoto\n")
+    return final
 
 if __name__ == "__main__":
     networkx_pagerank()
